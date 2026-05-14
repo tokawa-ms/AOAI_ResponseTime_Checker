@@ -25,7 +25,9 @@ Copy-Item .\appsettings.json .\appsettings.local.json
 {
   "AzureOpenAI": {
     "Endpoint": "https://<your-resource-name>.openai.azure.com/",
+    "TokenScope": "https://cognitiveservices.azure.com/.default",
     "TenantId": "<azure-openai-resource-tenant-id>",
+    "Deployments": [],
     "Targets": [
       { "Name": "gpt-4.1-mini", "Deployment": "<deployment-name-1>" },
       {
@@ -39,11 +41,24 @@ Copy-Item .\appsettings.json .\appsettings.local.json
         "ReasoningEffort": "medium"
       }
     ]
+  },
+  "Benchmark": {
+    "RequestsFile": "requests.json",
+    "WarmupRuns": 1,
+    "MeasurementRunsPerRequest": 1,
+    "MaxParallelRequestsPerModel": 10,
+    "MaxOutputTokenCount": 32768,
+    "RequestTimeoutSeconds": 180,
+    "DelayBetweenRequestsMs": 250,
+    "ResultsDirectory": "results",
+    "LogLevel": "Basic"
   }
 }
 ```
 
 `TenantId` は Azure OpenAI リソースが存在する Microsoft Entra テナント ID です。複数テナントにサインインしている環境では、これを空のままにすると別テナントのトークンが使われ、`Tenant provided in token does not match resource token` で失敗することがあります。
+
+`TokenScope` は通常 `https://cognitiveservices.azure.com/.default` のまま利用します。
 
 ローカルの Azure CLI 認証を使う場合は、リソースのテナントを明示してサインインすることもできます。
 
@@ -61,6 +76,8 @@ az account set --subscription <subscription-id-or-name>
   "Endpoint": "https://<another-resource>.openai.azure.com/"
 }
 ```
+
+`Targets` を使わない場合は、`Deployments` に deployment 名の配列を設定すると、共通 `Endpoint` を使って同じ名前で target が作られます。
 
 reasoning model の `reasoning_effort` を比較したい場合は、同じ `Deployment` を複数の target として登録し、`ReasoningEffort` に `low`、`medium`、または `high` を指定します。未指定の場合はサービス側の既定値を使います。
 
@@ -125,6 +142,7 @@ dotnet run --project .\AOAI.ResponseTime.Checker.csproj -- Benchmark:LogLevel=Re
 - `MaxParallelRequestsPerModel` は同一 model target 内で同時に実行する API リクエスト数の上限です。`1` の場合は従来どおり直列実行です。
 - `MaxOutputTokenCount` は 1 回の API 呼び出しで生成できる出力トークン数の上限です。reasoning model では、画面に表示される本文だけでなく内部推論トークンも含まれます。
 - `RequestTimeoutSeconds` は 1 回の API 呼び出しのタイムアウト秒数です。`0` 以下にするとタイムアウトを設定しません。
+- `DelayBetweenRequestsMs` は各 API 呼び出し後に待機するミリ秒です。`0` 以下なら待機しません。
 - 失敗した本測定は CSV/JSON に記録されますが、平均値からは除外します。
 - endpoint は `https://<resource>.openai.azure.com/` と `https://<resource>.openai.azure.com/openai/v1/` のどちらでも指定できます。
 - 同一 model target では、まずウォームアップ実行を `MaxParallelRequestsPerModel` の範囲で並列実行し、すべて完了してから本測定を同じ上限で並列実行します。

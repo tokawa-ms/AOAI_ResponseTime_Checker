@@ -1,0 +1,72 @@
+[
+    {
+        "id": "task-01",
+        "name": "Short fact",
+        "systemPrompt": "You are a concise assistant. Answer in Japanese.",
+        "userPrompt": "Azure OpenAI Service を一文で説明してください。",
+        "maxOutputTokenCount": 128
+    },
+    {
+        "id": "task-02",
+        "name": "Small comparison",
+        "systemPrompt": "You are a concise assistant. Answer in Japanese.",
+        "userPrompt": "GPT-4.1 mini と GPT-4.1 を、応答速度、コスト、精度の観点で簡潔に比較してください。",
+        "maxOutputTokenCount": 192
+    },
+    {
+        "id": "task-03",
+        "name": "Bullet summary",
+        "systemPrompt": "You are a technical assistant. Answer in Japanese.",
+        "userPrompt": "次の要件を箇条書きで整理してください。要件: .NET 8 のコンソールアプリで、複数の Azure OpenAI deployment に同じプロンプトを送信し、平均応答時間を CSV に保存する。認証は DefaultAzureCredential を使う。",
+        "maxOutputTokenCount": 256
+    },
+    {
+        "id": "task-04",
+        "name": "Procedure draft",
+        "systemPrompt": "You are a technical writer. Answer in Japanese.",
+        "userPrompt": "開発者がローカル環境から DefaultAzureCredential で Azure OpenAI Service に接続するための準備手順を、前提条件、Azure 側の権限、ローカルでのログイン、実行確認に分けて説明してください。",
+        "maxOutputTokenCount": 384
+    },
+    {
+        "id": "task-05",
+        "name": "Config review",
+        "systemPrompt": "You are a senior C# engineer. Answer in Japanese.",
+        "userPrompt": "次の appsettings.json の設計をレビューし、改善点を 5 つ挙げてください。設定: AzureOpenAI.Endpoint, AzureOpenAI.Targets[].Deployment, Benchmark.RequestsFile, Benchmark.WarmupRuns, Benchmark.MeasurementRunsPerRequest, Benchmark.ResultsDirectory。用途は複数モデルの応答時間比較です。",
+        "maxOutputTokenCount": 512
+    },
+    {
+        "id": "task-06",
+        "name": "Architecture explanation",
+        "systemPrompt": "You are an Azure solution architect. Answer in Japanese.",
+        "userPrompt": "Azure OpenAI の複数 deployment に同一リクエストを順番に送信して応答時間を比較する検証ツールの構成を説明してください。設定ファイル、リクエスト定義、認証、計測、結果出力、再実行性の観点を含めてください。",
+        "maxOutputTokenCount": 640
+    },
+    {
+        "id": "task-07",
+        "name": "Risk analysis",
+        "systemPrompt": "You are a reliability engineer. Answer in Japanese.",
+        "userPrompt": "LLM の応答時間を測定するときに結果へ影響する要因を分析してください。ネットワーク、リージョン、モデル、プロンプト長、出力トークン数、レート制限、ウォームアップ、同時実行、認証トークン取得、サービス側混雑の観点を含めて、測定時の注意点も提案してください。",
+        "maxOutputTokenCount": 768
+    },
+    {
+        "id": "task-08",
+        "name": "Code design",
+        "systemPrompt": "You are a senior .NET engineer. Answer in Japanese.",
+        "userPrompt": "次の C# コンソールアプリの設計方針を提案してください。要件は、JSON ファイルからタスク一覧を読み込み、Azure OpenAI の複数 deployment に同じタスクを送信し、Stopwatch で応答時間を測り、成功と失敗を記録し、deployment ごとの平均、タスクごとの平均、CSV と JSON の詳細結果を出力することです。クラス構成、例外処理、設定の上書き方法、将来の拡張ポイントを含めてください。",
+        "maxOutputTokenCount": 896
+    },
+    {
+        "id": "task-09",
+        "name": "Long context synthesis",
+        "systemPrompt": "You are an expert technical consultant. Answer in Japanese.",
+        "userPrompt": "以下の長めの背景を読み、検証計画を作ってください。背景: あるチームでは、同一リージョンに複数の Azure OpenAI deployment を用意し、利用シナリオごとにモデルを切り替える設計を検討しています。短い FAQ、設定レビュー、設計相談、長文要約など、入力長と期待出力長が異なるワークロードがあります。モデル選定では品質だけでなく、P95 ではなくまず平均応答時間を簡易比較したい段階です。ローカル開発者はキーを共有せず、Microsoft Entra ID と DefaultAzureCredential で認証します。測定結果はあとで Excel や Power BI に取り込むため CSV が必要で、失敗したリクエストも除外せず記録したいです。将来はタスク数を増やす予定です。検証計画には目的、前提、測定条件、タスク設計、実行手順、結果の読み方、限界、次の改善案を含めてください。",
+        "maxOutputTokenCount": 1024
+    },
+    {
+        "id": "task-10",
+        "name": "Very long planning prompt",
+        "systemPrompt": "You are an Azure AI performance specialist. Answer in Japanese.",
+        "userPrompt": "次の詳細要件から、Azure OpenAI 応答時間比較ツールの改善ロードマップを作成してください。詳細要件: 現在は .NET 8 のコンソールアプリとして実装し、NuGet の OpenAI ライブラリを使い、DefaultAzureCredential で Azure OpenAI に接続します。設定ファイルでは、同じリージョンにある複数の deployment または endpoint と deployment の組を定義できます。リクエストは別ファイルの JSON 配列で管理し、短い質問から長い設計相談まで 10 個のタスクを持ちます。各タスクは system prompt、user prompt、必要に応じた最大出力トークン数を持ちます。計測ではウォームアップ実行と本測定実行を分け、本測定だけで平均値を計算します。詳細結果には target 名、deployment、task id、run number、warmup かどうか、成功可否、経過ミリ秒、応答文字数、finish reason、エラーを含めます。出力はコンソールのサマリー、CSV、JSON です。今後、P50/P95、同時実行、ランダム化、リトライ、Azure Monitor 連携、GitHub Actions での定期実行、モデル品質評価、コスト推定も追加したいです。ロードマップは短期、中期、長期に分け、実装難易度と期待効果も示してください。",
+        "maxOutputTokenCount": 1200
+    }
+]
